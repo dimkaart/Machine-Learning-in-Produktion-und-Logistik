@@ -136,6 +136,7 @@ def gesamt(image_path, Pfad, save_model, iOU, score, output, pixel, input_size =
 # OCR function for each character
 def ocr_neu(file, root, subdirectory, tune = False):
     img = cv2.imread(os.path.join(os.path.join(root, subdirectory),file))
+    img = cv2.resize(img, None, fx = 4, fy = 4, interpolation = cv2.INTER_CUBIC)
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     blur = cv2.GaussianBlur(gray, (5,5), 0)
     if tune: # tune parameters oem and psm
@@ -146,12 +147,12 @@ def ocr_neu(file, root, subdirectory, tune = False):
     data = re.sub('[\W_]+', '', data)
     return(data)
 
-# rotation function (not used)
-def rotation(Pfad, image_path):
+# rotation function
+def rotation(Pfad, image_path, lower, upper):
     image = cv2.imread(Pfad+image_path)
     # create border
     row, col = image.shape[:2]
-    bottom = image[row-2:row, 0:col]
+    bottom = image[0:row, 0:col]
     mean = cv2.mean(bottom)[0]
     bordersize = 5
     border = cv2.copyMakeBorder(
@@ -177,32 +178,70 @@ def rotation(Pfad, image_path):
         if(area > max_area):
             max_area = area
             max_cnt = cnt
-    min_rect = cv2.minAreaRect(max_cnt)
-    (midpoint, widthheight, angle) = min_rect
-    x = midpoint[0]
-    y = midpoint[1]
-    w = widthheight[0]
-    h = widthheight[1]
-    # rotate Image
-    M = cv2.getRotationMatrix2D((x//2, y//2), angle, 1.0)
-    rotation1 = cv2.warpAffine(border, M, (int(w*2), int(h)))
-    rotation2 = ndimage.rotate(rotation1, 90)
-    print(angle)
-    # if angle is not between -15° and -80°, keep original image in pipeline
-    if (-15 >= angle >= -80.0): 
-        #print('neu')
-        rotated_image = rotation2
-        cv2.imshow("Rotation", rotated_image)
-        cv2.waitKey(0)
-        rotated_image = Image.fromarray(rotated_image)
-        rotated_image = rotated_image.convert('L')
-        rotated_image.save(Pfad+image_path)
+    if max_cnt is not None:
+        min_rect = cv2.minAreaRect(max_cnt)
+        (midpoint, widthheight, angle) = min_rect
+        # Get the image size
+        # NumPy stores image matricies backwards
+        image_size = (border.shape[1], border.shape[0])
+        image_center = tuple(np.array(image_size) / 2)
+
+        # Convert the OpenCV 3x2 rotation matrix to 3x3
+        rot_mat = np.vstack([cv2.getRotationMatrix2D(image_center, angle, 1.0), [0, 0, 1]])
+        rot_mat_notranslate = np.matrix(rot_mat[0:2, 0:2])
+        # Shorthand for below calcs
+        image_w2 = image_size[0] * 0.5
+        image_h2 = image_size[1] * 0.5
+        # Obtain the rotated coordinates of the image corners
+        rotated_coords = [(np.array([-image_w2,  image_h2]) * rot_mat_notranslate).A[0],(np.array([ image_w2,  image_h2]) * rot_mat_notranslate).A[0],(np.array([-image_w2, -image_h2]) * rot_mat_notranslate).A[0],(np.array([ image_w2, -image_h2]) * rot_mat_notranslate).A[0]]
+
+        # Find the size of the new image
+        x_coords = [pt[0] for pt in rotated_coords]
+        x_pos = [x for x in x_coords if x > 0]
+        x_neg = [x for x in x_coords if x < 0]
+
+        y_coords = [pt[1] for pt in rotated_coords]
+        y_pos = [y for y in y_coords if y > 0]
+        y_neg = [y for y in y_coords if y < 0]
+
+        right_bound = max(x_pos)
+        left_bound = min(x_neg)
+        top_bound = max(y_pos)
+        bot_bound = min(y_neg)
+
+        new_w = int(abs(right_bound - left_bound))
+        new_h = int(abs(top_bound - bot_bound))
+
+        # translation matrix to keep the image centred
+        trans_mat = np.matrix([[1, 0, int(new_w * 0.5 - image_w2)],[0, 1, int(new_h * 0.5 - image_h2)],[0, 0, 1]])
+
+        # Compute the tranform for the combined rotation and translation
+        affine_mat = (np.matrix(trans_mat) * np.matrix(rot_mat))[0:2, :]
+
+        # Apply the transform
+        rotation1 = cv2.warpAffine(image,affine_mat,(new_w, new_h),flags=cv2.INTER_LINEAR)
+        # correction of rotation for -46 >= angle >= -90
+        rotation2 = ndimage.rotate(rotation1, 90)
+        # if angle is not between -20° and -70°, keep original image in pipeline
+        if (lower >= angle >= -45.0):
+            rotated_image = rotation1
+            rotated_image = Image.fromarray(rotated_image)
+            rotated_image = rotated_image.convert('L')
+            rotated_image.save(Pfad+image_path)
+        elif (-45 > angle >= upper):
+            rotated_image = rotation2
+            rotated_image = Image.fromarray(rotated_image)
+            rotated_image = rotated_image.convert('L')
+            rotated_image.save(Pfad+image_path)
+        else:
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            cv2.imwrite(Pfad+image_path, image)
     else:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         cv2.imwrite(Pfad+image_path, image)
        
 # OCR function for whole license plate (if no character is recognized)
-def ocr_tesseract(image_path, Pfad, tune = False, **kwargs):
+def ocr_tesseract(image_path, Pfad, **kwargs):
     original_image = cv2.imread(os.path.join(Pfad, image_path))
     gray = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
