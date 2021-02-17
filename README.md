@@ -186,7 +186,7 @@ Es wird zusätzlich eine Ergebnis-Datei erstellt, in der Bildname und erkanntes 
 ![](/data/helpers/Ergebnis.png)
 
 ## Übersicht der Preprocessing Schritte:
-![](/data/hel
+![](/data/helpers/preprocessingschritte.png)
 - **Resizing:** Bildausschnitt wird vergrößert, da das Nummernschilder auf den meisten Bildern nur einen sehr kleinen Teilbereich darstellt. Zudem wird bei der OCR, eine bestimmte Pixelhöhe für die Extraktion benötigt
 - **Grayscaling:** Da für das Auslesen des Nummernschildes Farben vernachlässigt werden können, wird als nächstes das Bild in Graustufen konvertiert. Somit lässt sich zusätzlich Rechenleistung einsparen
 - **Gaussian-Blur:** Um des weiteren zusätzlich Rauschen und irrelevante Informationen zu entfernen, wird die Gaußche-Unschärfetechnik verwendet. Wichtig ist dabei zu beachten, dass je höher der Einstellungswert, desto weniger Rauschen entsteht, jedoch auch gleichzeitig mehr Bildinformation verloren wird
