@@ -142,7 +142,7 @@ def main(_argv):
                 print('durchschnittliche Levenshtein-Distanz:', np.mean(distance))
         print('Bilder in Input:', input_vergleich)
         print('Bilder in Output:', output_vergleich)
-        print('\nSchreibe Ergenisdatei...\n')
+        print('\nSchreibe Ergebnisdatei...\n')
         for index in input_vergleich: # create txt output file
             if not output_vergleich:
                 ErgFile.write(index + ":" + '\n')
