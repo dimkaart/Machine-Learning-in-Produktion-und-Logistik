@@ -165,7 +165,7 @@ Die zu erkennenden Bilder von Fahrzeugen mit Kennzeichen bitte in den ./Input/ O
 ![](/data/helpers/Input.png)
 
 ## Einstellungsmöglichkeiten Pipeline
-In Zeile 194 & 194 können die Parameter final & tune eingestellt werden. Dabei wird mit tune = True das Tuning durchgeführt und final = True berechnet keine Levenshtein Distanz.
+In Zeile 209, 210 und 211 können die Parameter rotate, final und tune eingestellt werden. Dabei wird mit tune = True das Tuning durchgeführt, rotate = True führt die Rotation durch und final = True berechnet keine Levenshtein Distanz.
 
 ## Pipeline ausführen
 ```
