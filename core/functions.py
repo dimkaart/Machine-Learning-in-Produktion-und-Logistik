@@ -218,7 +218,7 @@ def rotation(Pfad, image_path, lower, upper):
         # Compute the tranform for the combined rotation and translation
         affine_mat = (np.matrix(trans_mat) * np.matrix(rot_mat))[0:2, :]
 
-        # Apply the transform --> (-0° to -45° License Plates, which are tilted to the left and -46° and -90° License Plates, which are tilted to the right)
+        # Apply the transform --> (-0° to -45° License Plates, which are tilted to the left and -46° to -90° License Plates, which are tilted to the right)
         rotation1 = cv2.warpAffine(image,affine_mat,(new_w, new_h),flags=cv2.INTER_LINEAR)
         # correction of rotation for -45 > angle >= -90
         rotation2 = ndimage.rotate(rotation1, 90)
