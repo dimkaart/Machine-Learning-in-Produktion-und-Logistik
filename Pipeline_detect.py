@@ -77,6 +77,10 @@ def main(_argv):
             iOU = iOU, score = score, output = Output, pixel = 5) 
         # functions.py applies YOLOv4 on the image to find the license plate and to crop along the result
 
+    Pfad = './Output/Crop//'
+    if rotate: #rotation
+        for image_path in os.listdir(Pfad):
+            rotation(Pfad = Pfad, image_path= image_path, lower = -20, upper = -70)
     cfg.YOLO.CLASSES = "./data/classes/char.names"
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
     # load model
@@ -190,6 +194,7 @@ def main(_argv):
 
 if __name__ == '__main__':
     try:
+        rotate = False
         tune = False
         final = True
         app.run(main)
