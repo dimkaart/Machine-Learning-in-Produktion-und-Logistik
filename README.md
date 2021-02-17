@@ -18,8 +18,8 @@ Dabei sollten verschiedene Methoden getestet werden und am Ende die beste ausgew
   
 
 ## Die Idee hinter der Pipeline
-![](/data/helpers/Pipeline.png)
-![](/data/helpers/Folie4.JPG)
+![](/data/helpers/ideepipeline.png)
+![](/data/helpers/finaleansaetze.png)
 
 ## Pseudocode
 - Initialiseren
@@ -186,22 +186,16 @@ Es wird zusätzlich eine Ergebnis-Datei erstellt, in der Bildname und erkanntes 
 ![](/data/helpers/Ergebnis.png)
 
 ## Übersicht der Preprocessing Schritte:
-![](/data/helpers/Screenshots/uebersicht.png)
-- Nutzung der Preprocessing Möglichkeiten von OpenCV
-![](/data/helpers/Screenshots/loading.png)
-- Der Bildbereich innerhalb der Bounding-Box wird herausgeschnitten und geladen
-![](/data/helpers/Screenshots/resizing.png)
-- Anschließend wird der Bildausschnitt vergrößert, da das Nummernschilder auf den meisten Bildern nur einen sehr kleinen Teilbereich darstellt. Zudem wird bei der OCR, eine bestimmte Pixelhöhe für die Extraktion benötigt
-![](/data/helpers/Screenshots/grayscaling.png)
-- Da für das Auslesen des Nummernschildes Farben vernachlässigt werden können, wird als nächstes das Bild in Graustufen konvertiert. Somit lässt sich zusätzlich Rechenleistung einsparen
-![](/data/helpers/Screenshots/gaussianblur.png)
-- Um des weiteren zusätzlich Rauschen und irrelevante Informationen zu entfernen, wird die Gaußche-Unschärfetechnik verwendet. Wichtig ist dabei zu beachten, dass je höher der Einstellungswert, desto weniger Rauschen entsteht, jedoch auch gleichzeitig mehr Bildinformation verloren wird
-![](/data/helpers/Screenshots/thresholding.png)
-- Damit die Zeichen auf dem Nummernschild herausstechen, muss des weiteren mit Hilfe des Schwellenwertverfahrens nach der Otsu-Methode der Vordergrund vom Hintergrund getrennt werden, indem der Hintergrund umgekehrt wird
-![](/data/helpers/Screenshots/dilatation.png)
-- Anschließend wird die Dilatationstechnik implementiert, um den weißen Bereich des Bildes zu vergrößern, sodass die weiße Kontur jedes Zeichens verstärkt wird
+![](/data/hel
+- **Resizing:** Bildausschnitt wird vergrößert, da das Nummernschilder auf den meisten Bildern nur einen sehr kleinen Teilbereich darstellt. Zudem wird bei der OCR, eine bestimmte Pixelhöhe für die Extraktion benötigt
+- **Grayscaling:** Da für das Auslesen des Nummernschildes Farben vernachlässigt werden können, wird als nächstes das Bild in Graustufen konvertiert. Somit lässt sich zusätzlich Rechenleistung einsparen
+- **Gaussian-Blur:** Um des weiteren zusätzlich Rauschen und irrelevante Informationen zu entfernen, wird die Gaußche-Unschärfetechnik verwendet. Wichtig ist dabei zu beachten, dass je höher der Einstellungswert, desto weniger Rauschen entsteht, jedoch auch gleichzeitig mehr Bildinformation verloren wird
+- **Thresholding Otsu-Methode:** Damit die Zeichen auf dem Nummernschild herausstechen, muss des weiteren mit Hilfe des Schwellenwertverfahrens nach der Otsu-Methode der Vordergrund vom Hintergrund getrennt werden, indem der Hintergrund umgekehrt wird
+
+## Rotation (falls nötig und möglich):
+![](/data/helpers/rotation.png)
 
 # Verworfene Ideen auf dem Weg zur finalen Pipeline
-![](/data/helpers/Folie3.JPG)
+![](/data/helpers/pipelineansaetze.png)
 
 
