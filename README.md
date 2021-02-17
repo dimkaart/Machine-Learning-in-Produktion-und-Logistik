@@ -184,7 +184,7 @@ Innerhalb des Ordners befinden sich:
 ![](/data/helpers/Output.png)
 
 Es wird zusätzlich eine Ergebnis-Datei erstellt, in der Bildname und erkanntes Kennzeichen bzw. die Buchstaben ausgegeben werden.
-![](/data/helpers/Ergebnis.png)
+- ![](/data/helpers/Ergebnis.png)
 
 ## Übersicht der Preprocessingschritte:
 ![](/data/helpers/preprocessingschritte.png)
