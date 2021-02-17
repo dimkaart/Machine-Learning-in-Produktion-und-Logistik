@@ -25,6 +25,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 
 # delete old detection results
+print('\nEntferne alte Ergebnisse...\n')
 for filename in os.listdir("./Output/Crop/"):
    os.remove("./Output/Crop/"+filename)
 for filename in os.listdir("./Output/Erkennung/"):
@@ -36,6 +37,7 @@ for filename in os.listdir("./Output_char/Erkennung/"):
 os.remove("./Output/Ergebnis.txt")
 
 # initialize solution .txt file
+print('Bereite Ergebnisdatei vor...\n')
 ErgFile=open("./Output/Ergebnis.txt","w")
 
 # set up
@@ -62,14 +64,17 @@ def main(_argv):
     input_size = 416 #Resize image
     
     # load model
+    print('Lade erstes YOLOv4 Modell...\n')
     saved_model_loaded = tf.saved_model.load(Model, tags=[tag_constants.SERVING])
 
     # loop through images in folder and run Yolov4 model on each
     Pfad='./Input/'
     input_names = []
     input_vergleich = []
+    print('Betrachte Bilder im Input Ordner...')
     for image_path in os.listdir(Pfad):
         input_vergleich += [image_path.split('.')[0]]
+        print('Aktuelles Auto: ' + image_path[:-4]+ '...')
         input_crop = image_path.split('_')[0]
         input_crop = input_crop.split('.')[0]
         input_names += [input_crop]
@@ -84,13 +89,16 @@ def main(_argv):
     cfg.YOLO.CLASSES = "./data/classes/char.names"
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
     # load model
+    print('\nLade zweites YOLOv4 Modell...\n')
     saved_model_char = tf.saved_model.load(Model_char, tags=[tag_constants.SERVING])
     Pfad = './Output/Crop/'
+    print('\nBetrachte Kennzeichen...')
     if not tune: # after tuning
         Pfad = './Output/Crop//'
         output_names = []
         output_vergleich = []
         for image_path in os.listdir(Pfad):
+            print('Aktuelles Kennzeichen: ' + image_path[:-4]+ '...')
             vergleich = image_path.split('.png')[0]
             vergleich = vergleich.split('crop_1_')
             output_vergleich += [vergleich[1]]
@@ -112,6 +120,7 @@ def main(_argv):
             distance[i] = len(input_names[i]) # if no license found => distance = number of character of true recognition
         insgesamt = []         
         path = './Output_char/Crop//'
+        print('\nBeginne OCR...\n')
         for root, subdirectories, files in os.walk(path): # loop through every license plate and detected characters
             for subdirectory in subdirectories:
                 result = ''
@@ -125,6 +134,7 @@ def main(_argv):
                 if not final: # outside final challenge calculate distance
                     index_name = input_names.index(original)
                     distance[index_name] = ls.distance(result, original)
+        print('Bereite die Ausgabe vor...\n')
         print('erkannte Kennzeichen:', insgesamt)
         if not final:
             if distance:
@@ -132,6 +142,7 @@ def main(_argv):
                 print('durchschnittliche Levenshtein-Distanz:', np.mean(distance))
         print('Bilder in Input:', input_vergleich)
         print('Bilder in Output:', output_vergleich)
+        print('Schreibe Ergenisdatei...\n')
         for index in input_vergleich: # create txt output file
             if not output_vergleich:
                 ErgFile.write(index + ":" + '\n')
@@ -141,6 +152,7 @@ def main(_argv):
             else: 
                 ErgFile.write(index + ":" + '\n')
         ErgFile.close()
+        print('Fertig!')
     else: # tuning
         Pfad = './Output/Crop//'
         distance_tess = []
