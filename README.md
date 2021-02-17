@@ -12,6 +12,7 @@ Dabei sollten verschiedene Methoden getestet werden und am Ende die beste ausgew
   - etc.
 - finale Pipeline:
   - YOLOv4 zur Kennzeichenerkennung
+  - OpenCV zur Kennzeichenrotation/-ausrichtung
   - YOLOv4 zur Buchstabenerkennung und segmentierung
   - PyTesseract für Buchstabenübersetzung 
   - Image PreProcessing in **allen** Schritten
