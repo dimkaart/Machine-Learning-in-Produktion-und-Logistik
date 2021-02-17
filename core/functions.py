@@ -143,7 +143,7 @@ def ocr_neu(file, root, subdirectory, tune = False):
         config_tune = '--oem ' + kwargs['oem'] +' -l deu --psm ' + kwargs['psm'] + ' -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 '
         data = pytesseract.image_to_string(blur, config=config_tune)
     else: # result after tuning 
-        data = pytesseract.image_to_string(blur, config='-c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ -l deu --psm 13 --oem 1')
+        data = pytesseract.image_to_string(blur, config='-c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ -l deu --psm 13 --oem 1')
     data = re.sub('[\W_]+', '', data)
     return(data)
 
@@ -247,7 +247,7 @@ def ocr_tesseract(image_path, Pfad, **kwargs):
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
     blur = cv2.medianBlur(thresh, 3)
     blur = cv2.resize(blur, None, fx = 2, fy = 2, interpolation = cv2.INTER_CUBIC)
-    text = pytesseract.image_to_string(blur, config='-c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ -l deu --psm 13 --oem 1')
+    text = pytesseract.image_to_string(blur, config='-c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ -l deu --psm 13 --oem 1')
     text = re.sub('[\W_]+', '', text)   
     return(text)
 
