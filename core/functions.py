@@ -134,7 +134,7 @@ def gesamt(image_path, Pfad, save_model, iOU, score, output, pixel, input_size =
         cv2.imwrite(output + 'Erkennung_' + image_name + '.png', image)
         
 # OCR function for each character
-def ocr_neu(file, root, subdirectory, tune = False):
+def ocr_neu(file, root, subdirectory, tune = False, resize = False, **kwargs):
     img = cv2.imread(os.path.join(os.path.join(root, subdirectory),file))
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     if resize:
