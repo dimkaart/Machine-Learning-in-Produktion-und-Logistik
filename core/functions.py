@@ -136,8 +136,12 @@ def gesamt(image_path, Pfad, save_model, iOU, score, output, pixel, input_size =
 # OCR function for each character
 def ocr_neu(file, root, subdirectory, tune = False):
     img = cv2.imread(os.path.join(os.path.join(root, subdirectory),file))
-    img = cv2.resize(img, None, fx = 4, fy = 4, interpolation = cv2.INTER_CUBIC)
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    if resize:
+        h, w = gray.shape
+        print(gray.shape)
+        gray = gray[0:h, 1:w-1]
+    img = cv2.resize(gray, None, fx = 4, fy = 4, interpolation = cv2.INTER_CUBIC)
     blur = cv2.GaussianBlur(gray, (5,5), 0)
     if tune: # tune parameters oem and psm
         config_tune = '--oem ' + kwargs['oem'] +' -l deu --psm ' + kwargs['psm'] + ' -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 '
@@ -145,6 +149,9 @@ def ocr_neu(file, root, subdirectory, tune = False):
     else: # result after tuning 
         data = pytesseract.image_to_string(blur, config='-c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ -l deu --psm 13 --oem 1')
     data = re.sub('[\W_]+', '', data)
+    if len(data) == 2:
+        if data[0] == data[1]:
+            data = data[0]
     return(data)
 
 # rotation function
@@ -244,10 +251,10 @@ def rotation(Pfad, image_path, lower, upper):
 def ocr_tesseract(image_path, Pfad, **kwargs):
     original_image = cv2.imread(os.path.join(Pfad, image_path))
     gray = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
-    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
-    blur = cv2.medianBlur(thresh, 3)
-    blur = cv2.resize(blur, None, fx = 2, fy = 2, interpolation = cv2.INTER_CUBIC)
-    text = pytesseract.image_to_string(blur, config='-c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ -l deu --psm 13 --oem 1')
+    blur = cv2.resize(gray, None, fx = 2, fy = 2, interpolation = cv2.INTER_CUBIC)
+    blur = cv2.medianBlur(blur, 3)
+    thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+    text = pytesseract.image_to_string(thresh, config='-c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ -l deu --psm 13 --oem 1')
     text = re.sub('[\W_]+', '', text)   
     return(text)
 
