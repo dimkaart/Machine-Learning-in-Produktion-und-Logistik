@@ -125,8 +125,15 @@ def main(_argv):
             for subdirectory in subdirectories:
                 result = ''
                 original = subdirectory.split('_')[2]
+                j = 0
                 for file in os.listdir(os.path.join(root, subdirectory)): # do ocr on all characters
-                    result += ocr_neu(file, root, subdirectory) 
+                    result_neu = ocr_neu(file, root, subdirectory)
+                    if crop:
+                        if len(result_neu) > 1:
+                            result_neu = ocr_neu(file, root, subdirectory, resize = True)
+                            if len(result_neu) > 1:
+                                j += 1
+                    result += result_neu
                 if result == '': # if no character has been recognized => use tesseract on whole license plate
                     erg = ocr_tesseract(image_path = image_path, Pfad = Pfad)
                     result = erg
