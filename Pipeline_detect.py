@@ -216,6 +216,7 @@ if __name__ == '__main__':
         rotate = False
         tune = False
         final = True
+        crop = True
         app.run(main)
     except SystemExit:
         pass
